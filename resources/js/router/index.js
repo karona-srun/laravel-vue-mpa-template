@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import store from '../store';
+import store from '../store/index';
 
 import SignIn from '../views/auth/SignIn.vue';
 import SignUp from '../views/auth/SignUp.vue';

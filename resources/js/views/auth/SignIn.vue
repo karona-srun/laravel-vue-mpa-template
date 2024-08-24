@@ -1,5 +1,41 @@
 <template>
-  <Row justify="center">
+  <div class="text-center">
+    <main class="form-signin">
+      <form ref="formInline" :model="formInline">
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div class="form-floating">
+          <input
+            type="email"
+            class="form-control"
+            v-model="formInline.email"
+            placeholder="Email address"
+          />
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            v-model="formInline.password"
+            placeholder="Password"
+          />
+          <label for="floatingPassword">Password</label>
+        </div>
+
+        <div class="checkbox mb-3">
+          <label>
+            <input type="checkbox" value="remember-me" /> Remember me
+          </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" @click.prevent="handleSubmit('formInline')" type="submit">
+          Sign in
+        </button>
+      </form>
+    </main>
+  </div>
+
+  <!-- <Row>
     <Col :sm="12" :md="12" :lg="6">
       <Divider>SignIn Account</Divider>
       <Form ref="formInline" :model="formInline" :rules="ruleInline">
@@ -35,76 +71,83 @@
         </FormItem>
       </Form>
     </Col>
-  </Row>
+  </Row> -->
 </template>
+<style>
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+</style>
+
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from "vuex";
 export default {
   data() {
-    return { 
+    return {
       formInline: {
         email: "",
         password: "",
       },
-      ruleInline: {
-        email: [
-          {
-            required: true,
-            message: "Please fill in the email address",
-            trigger: "blur",
-          },
-          {
-            type: "email"
-          },
-        ],
-        password: [
-          {
-            required: true,
-            message: "Please fill in the password.",
-            trigger: "blur",
-          },
-          {
-            type: "string",
-            min: 6,
-            message: "The password length cannot be less than 6 bits",
-            trigger: "blur",
-          },
-        ],
-      },
     };
   },
   computed: {
-    ...mapState(["userdata"])     
+    ...mapState(["userdata"]),
   },
   methods: {
     ...mapActions(["signIn"]),
     handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-        const response = this.signIn(this.formInline);
-        response.then(response => { 
-          if(response.status === 'error'){
-            if(response.validator === true){
-              this.$Notice.error({
-                title: 'Error!',
-                desc: response[0]
-              });
-            }else{
-              this.$Notice.error({
-                title: 'Error!',
-                desc: response.error
-              });
+          const response = this.signIn(this.formInline);
+          response.then((response) => {
+            if (response.status === "error") {
+              if (response.validator === true) {
+                console.log(JSON.stringify( response[0] ))
+              } else {
+                console.log(JSON.stringify( response.error ))
+              }
+            } else {
+              this.$router.push({ path: "/dashboard" });
             }
-          }else{
-            this.$router.push({ path:'/dashboard' })
-          }
-        })
-        }
-      });
+          });
     },
-    handleGoBack(){
-      this.$router.push('/')
-    }
+    handleGoBack() {
+      this.$router.push("/");
+    },
   },
 };
 </script>

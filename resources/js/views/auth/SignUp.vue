@@ -1,5 +1,62 @@
 <template>
-  <Row justify="center">
+  <div class="text-center">
+    <main class="form-signin">
+      <form ref="formInline" :model="formInline">
+        <h1 class="h3 mb-3 fw-normal">Please sign up</h1>
+
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            v-model="formInline.firstname"
+            placeholder="First Name"
+          />
+          <label for="floatingInput">First Name</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="text"
+            class="form-control"
+            v-model="formInline.lastname"
+            placeholder="Last Name"
+          />
+          <label for="floatingInput">Last Name</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="email"
+            class="form-control"
+            v-model="formInline.email"
+            placeholder="Email address"
+          />
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            v-model="formInline.password"
+            placeholder="Password"
+          />
+          <label for="floatingPassword">Password</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            v-model="formInline.password_confirmation"
+            placeholder="Re-Type Password"
+          />
+          <label for="floatingPassword">Re-Type Password</label>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" @click.prevent="handleSubmit('formInline')" type="submit">
+          Sign Up
+        </button>
+      </form>
+    </main>
+  </div>
+  <!-- <Row justify="center">
     <Col :sm="12" :md="12" :lg="6">
       <Divider>SignUp Account</Divider>
       <Form ref="formInline" :model="formInline" :rules="ruleInline">
@@ -61,31 +118,12 @@
         </FormItem>
       </Form>
     </Col>
-  </Row>
+  </Row> -->
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 export default {
   data() {
-    const validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please fill in the password"));
-      } else {
-        if (this.formInline.password_confirmation !== "") {
-          this.$refs.formInline.validateField("password_confirmation");
-        }
-        callback();
-      }
-    };
-    const validatePassCheck = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please fill in the password again"));
-      } else if (value !== this.formInline.password) {
-        callback(new Error("The two input passwords do not match!"));
-      } else {
-        callback();
-      }
-    };
     return {
       formInline: {
         firstname: "",
@@ -94,85 +132,23 @@ export default {
         password: "",
         password_confirmation: "",
       },
-      ruleInline: {
-        firstname: [
-          {
-            required: true,
-            message: "Please fill in the first name",
-            trigger: "blur",
-          },
-        ],
-        lastname: [
-          {
-            required: true,
-            message: "Please fill in the first name",
-            trigger: "blur",
-          },
-        ],
-        email: [
-          {
-            required: true,
-            message: "Please fill in the email address",
-            trigger: "blur",
-          },
-        ],
-        password: [
-          {
-            validator: validatePass,
-            required: true,
-            trigger: "blur",
-          },
-        ],
-        password_confirmation: [
-          {
-            validator: validatePassCheck,
-            trigger: "blur",
-            required: true,
-          },
-        ],
-      },
     };
   },
   methods: {
     ...mapActions(["signUp"]),
     handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
         const response = this.signUp(this.formInline);
-        
-        response.then(response => {
+        alert(JSON.stringify(this.formInline))
+        response.then((response) => {
           console.log(response);
 
-          if(response.status === 'error'){
-            this.$Notice.error({
-                title: 'Error!',
-                desc: response[0]
-            });
-          }else{
-            this.$Notice.success({
-                title: 'Success!',
-                desc: response.message
-            });
-            this.$router.push({ path:"/sign-in" });
+          if (response.status === "error") {
+            console.log(JSON.stringify( response[0] ))
+          } else {
+            console.log(JSON.stringify( response.message ))
+            this.$router.push({ path: "/sign-in" });
           }
-        })
-        
-        // if (valid) {
-        //   this.$Message.success({
-        //     background: true,
-        //     content: "Success!",
-        //   });
-          // localStorage.signedIn = true;
-          // localStorage.setItem("user", JSON.stringify(this.formInline));
-          // localStorage.setItem("jwt", this.formInline);
-          // this.$router.push("/dashboard");
-        // } else {
-        //   this.$Message.error({
-        //     background: true,
-        //     content: "Fail!",
-        //   });
-        //   localStorage.signedIn = false;
-        // }
-      });
+        });
     },
     handleGoBack() {
       this.$router.push("/");
